@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmed | SweetMart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --choc-brown: #2D1B0E; 
+            --pink-accent: #FF85A2; 
+            --card-inner: #3D2B1F; 
+            --success-green: #4CAF50;
+        }
+
+        body { 
+            background: var(--choc-brown); 
+            color: white; 
+            font-family: 'Quicksand', sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            overflow: hidden;
+        }
+
+        /* Smooth Fade-In Animation */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Floating Animation for Icon */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .success-card { 
+            background: var(--card-inner); 
+            padding: 60px; 
+            border-radius: 50px; 
+            text-align: center; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            max-width: 550px; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .icon-container {
+            font-size: 100px;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        h1 { 
+            font-family: 'Fredoka'; 
+            color: var(--pink-accent); 
+            font-size: 3rem; 
+            margin: 10px 0;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        p { 
+            font-size: 1.1rem; 
+            opacity: 0.9;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+
+        .order-id { 
+            background: rgba(0,0,0,0.3); 
+            padding: 12px 25px; 
+            border-radius: 20px; 
+            display: inline-block; 
+            margin: 25px 0; 
+            font-weight: 700; 
+            color: var(--pink-accent); 
+            border: 1px solid rgba(255,133,162,0.2);
+            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+        }
+
+        .details-box {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #ddd;
+            animation: fadeInUp 0.8s ease-out 0.7s backwards;
+        }
+
+        .btn-group {
+            margin-top: 40px;
+            animation: fadeInUp 0.8s ease-out 0.8s backwards;
+        }
+
+        .btn-home { 
+            display: inline-block; 
+            background: var(--pink-accent); 
+            color: white; 
+            text-decoration: none; 
+            padding: 18px 45px; 
+            border-radius: 50px; 
+            font-weight: 700; 
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(255,133,162,0.3);
+        }
+
+        .btn-home:hover { 
+            transform: scale(1.1); 
+            box-shadow: 0 15px 30px rgba(255,133,162,0.5);
+        }
+
+        .view-history {
+            display: block;
+            margin-top: 20px;
+            color: white;
+            opacity: 0.6;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        .view-history:hover { opacity: 1; color: var(--pink-accent); }
+
+        /* Confetti simulation using CSS */
+        .confetti {
+            position: absolute;
+            width: 10px; height: 10px;
+            background: var(--pink-accent);
+            top: -10px;
+            border-radius: 2px;
+            animation: fall 3s linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="confetti" style="left:10%; background:#FF85A2; animation-delay:0s"></div>
+    <div class="confetti" style="left:30%; background:#FFD1DC; animation-delay:1s"></div>
+    <div class="confetti" style="left:50%; background:#FF85A2; animation-delay:2s"></div>
+    <div class="confetti" style="left:70%; background:#FFD1DC; animation-delay:0.5s"></div>
+    <div class="confetti" style="left:90%; background:#FF85A2; animation-delay:1.5s"></div>
+
+    <div class="success-card">
+        <div class="icon-container">🎂</div>
+        <h1>Sweet Success!</h1>
+        <p>Your handcrafted cake order has been received.<br>Our chefs are getting the oven ready!</p>
+        
+        <div class="order-id">Order Reference: #{{ order.order_id }}</div>
+        
+        <div class="details-box">
+            <strong>{{ order.cake_size }} {{ order.cake_shape }} Cake</strong><br>
+            Scheduled for: {{ order.delivery_date }}
+        </div>
+        
+        <div class="btn-group">
+            <a href="/" class="btn-home">Back to Shop</a>
+            <a href="/profile" class="view-history">View Order in History →</a>
+        </div>
+    </div>
+</body>
+</html>

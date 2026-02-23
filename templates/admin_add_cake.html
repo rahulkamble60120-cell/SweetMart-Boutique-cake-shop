@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin | Add New Cake</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --choc-brown: #2D1B0E; --pink-accent: #FF85A2; --cream-text: #FFFDF5; --card-inner: #3D2B1F; }
+        body { background: var(--choc-brown); color: var(--cream-text); font-family: 'Quicksand'; display: grid; place-items: center; min-height: 100vh; margin: 0; }
+        .admin-card { background: var(--card-inner); padding: 40px; border-radius: 30px; width: 100%; max-width: 500px; border: 1px solid rgba(255,255,255,0.1); }
+        h2 { font-family: 'Fredoka'; color: var(--pink-accent); text-align: center; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9rem; }
+        input, select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; outline: none; box-sizing: border-box; }
+        textarea { height: 100px; resize: none; }
+        .btn-submit { background: var(--pink-accent); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,133,162,0.3); }
+    </style>
+</head>
+<body>
+    <div class="admin-card">
+        <h2>Add to Boutique</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label>Cake Name</label>
+                <input type="text" name="name" placeholder="e.g. Belgian Truffle" required>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select name="category" required>
+                    {% for cat in categories %}
+                    <option value="{{ cat.name }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Base Price (500g)</label>
+                <input type="number" name="price" placeholder="₹" required>
+            </div>
+            <div class="form-group">
+                <label>Short Description</label>
+                <textarea name="description" placeholder="Describe the flavors and texture..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Image Filename</label>
+                <input type="text" name="image_file" placeholder="cake1.jpg (must be in static folder)" required>
+            </div>
+            <button type="submit" class="btn-submit">Add Cake</button>
+        </form>
+        <p style="text-align:center; margin-top:20px;"><a href="/" style="color:white; opacity:0.6; text-decoration:none;">Cancel</a></p>
+    </div>
+</body>
+</html>

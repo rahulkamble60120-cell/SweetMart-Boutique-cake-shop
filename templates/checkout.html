@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boutique Checkout | SweetMart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --choc: #2D1B0E; --pink: #FF85A2; --cream: #FFFDF5; 
+            --glass: rgba(255, 255, 255, 0.03); --blur: blur(25px);
+            --green: #81C784;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        body { 
+            margin: 0; font-family: 'Quicksand', sans-serif; 
+            background: radial-gradient(circle at top right, #3D2B1F, var(--choc));
+            color: var(--cream); display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            padding: 20px; overflow-x: hidden;
+        }
+
+        .checkout-wrapper {
+            display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px;
+            width: 100%; max-width: 1100px; animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .form-panel { background: var(--glass); backdrop-filter: var(--blur); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; padding: 40px; }
+        .receipt-panel { background: rgba(255, 133, 162, 0.05); backdrop-filter: var(--blur); border: 1px dashed rgba(255, 133, 162, 0.3); border-radius: 40px; padding: 40px; display: flex; flex-direction: column; justify-content: space-between; position: sticky; top: 20px; height: fit-content; }
+
+        h1 { font-family: 'Fredoka'; color: var(--pink); margin-top: 0; font-size: 2.2rem; }
+        label { display: block; margin-bottom: 10px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.6; }
+        
+        input, select, textarea {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            padding: 16px; border-radius: 18px; color: white; outline: none; font-family: 'Quicksand'; margin-bottom: 20px; box-sizing: border-box; transition: 0.3s;
+        }
+        input:focus, select:focus { border-color: var(--pink); background: rgba(0,0,0,0.5); }
+
+        /* Payment Method Selector */
+        .payment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
+        .payment-card { 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 18px 5px; 
+            border-radius: 20px; text-align: center; cursor: pointer; transition: 0.4s;
+        }
+        .payment-card i { font-size: 1.4rem; color: var(--pink); display: block; margin-bottom: 8px; }
+        .payment-card span { font-size: 0.8rem; font-weight: 700; }
+        .payment-card.active { background: var(--pink); border-color: var(--pink); box-shadow: 0 10px 25px rgba(255,133,162,0.4); transform: translateY(-5px); }
+        .payment-card.active i, .payment-card.active span { color: white; }
+
+        /* QR Section Animation */
+        #qr-section {
+            max-height: 0; overflow: hidden; opacity: 0;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.03); border-radius: 25px; text-align: center;
+        }
+        #qr-section.active { max-height: 400px; opacity: 1; padding: 25px; border: 1px dashed var(--pink); margin-bottom: 25px; }
+        .qr-frame { background: white; padding: 12px; display: inline-block; border-radius: 15px; }
+
+        /* Receipt Details */
+        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.95rem; }
+        .big-price { font-family: 'Fredoka'; font-size: 3rem; color: var(--pink); display: block; margin: 10px 0; }
+        .strikethrough { text-decoration: line-through; opacity: 0.4; }
+        
+        .btn-confirm {
+            width: 100%; background: var(--pink); color: white; border: none; padding: 22px;
+            border-radius: 22px; font-weight: 700; font-size: 1.2rem; cursor: pointer; transition: 0.4s;
+            margin-top: 20px;
+        }
+        .btn-confirm:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(255,133,162,0.5); letter-spacing: 1px; }
+
+        @media (max-width: 900px) { .checkout-wrapper { grid-template-columns: 1fr; } .receipt-panel { position: static; } }
+    </style>
+</head>
+<body>
+
+<div class="checkout-wrapper">
+    <div class="form-panel">
+        <h1>Gourmet <span>Checkout</span></h1>
+        <form action="/place_order" method="POST" id="order-form">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="input-group">
+                    <label>Cake Size</label>
+                    <select name="cake_size" id="cake_size" 
+                            data-base="{{ items[0].price }}" 
+                            data-offer="{{ items[0].discount_price if items[0].discount_price > 0 else items[0].price }}">
+                        <option value="0.5kg" data-mult="1">0.5 kg (Personal)</option>
+                        <option value="1kg" data-mult="1.8">1.0 kg (Family)</option>
+                        <option value="2kg" data-mult="3.5">2.0 kg (Party)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Cake Shape</label>
+                    <select name="cake_shape">
+                        <option value="Round">Classic Round</option>
+                        <option value="Heart">Sweet Heart</option>
+                        <option value="Square">Modern Square</option>
+                    </select>
+                </div>
+            </div>
+
+            <label>Custom Message on Cake</label>
+            <input type="text" name="cake_message" placeholder="E.g. Happy Anniversary Rahul!">
+
+            <label>Delivery Address</label>
+            <textarea name="address" rows="3" placeholder="Street, Landmark, City..." required>{{ user.address or '' }}</textarea>
+
+            <label>Payment Method</label>
+            <div class="payment-grid">
+                <div class="payment-card active" onclick="selectPayment(this, 'upi')">
+                    <input type="radio" name="payment_method" value="UPI" checked hidden>
+                    <i class="fas fa-qrcode"></i><span>UPI QR</span>
+                </div>
+                <div class="payment-card" onclick="selectPayment(this, 'card')">
+                    <input type="radio" name="payment_method" value="Card" hidden>
+                    <i class="fas fa-credit-card"></i><span>Card</span>
+                </div>
+                <div class="payment-card" onclick="selectPayment(this, 'cod')">
+                    <input type="radio" name="payment_method" value="COD" hidden>
+                    <i class="fas fa-hand-holding-usd"></i><span>COD</span>
+                </div>
+            </div>
+
+            <div id="qr-section" class="active">
+                <div class="qr-frame">
+                    <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=rahul@upi&pn=SweetMart&am={{ (items[0].discount_price if items[0].discount_price > 0 else items[0].price) + 20 }}&cu=INR" alt="UPI QR">
+                </div>
+                <p style="font-size: 0.8rem; margin-top: 10px; color: var(--pink); font-weight: 700;">Scan to Pay: ₹<span id="qr-amt">{{ (items[0].discount_price if items[0].discount_price > 0 else items[0].price) + 20 }}</span></p>
+            </div>
+
+            <label>Preferred Delivery Date</label>
+            <input type="date" name="delivery_date" required>
+
+            <input type="hidden" name="final_amount" id="final_amount" value="{{ (items[0].discount_price if items[0].discount_price > 0 else items[0].price) + 20 }}">
+        </form>
+    </div>
+
+    <div class="receipt-panel">
+        <div>
+            <h2 style="font-family: 'Fredoka'; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 15px;">Order Summary</h2>
+            <div class="receipt-row">
+                <span>Original Price</span>
+                <span class="strikethrough" id="orig-price">₹{{ items[0].price }}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Boutique Offer</span>
+                <span style="color: var(--green); font-weight: 700;" id="offer-price">₹{{ items[0].discount_price if items[0].discount_price > 0 else items[0].price }}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Size Upgrade</span>
+                <span id="upgrade-cost">₹0.00</span>
+            </div>
+            <div class="receipt-row" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+                <span>Delivery Charge</span>
+                <span style="color: var(--pink);">+₹20.00</span>
+            </div>
+        </div>
+
+        <div>
+            <label>Grand Total</label>
+            <span class="big-price">₹<span id="display-total">{{ (items[0].discount_price if items[0].discount_price > 0 else items[0].price) + 20 }}</span></span>
+            <p style="font-size: 0.75rem; opacity: 0.5;">Tax included in final price.</p>
+            <button type="submit" form="order-form" class="btn-confirm">Place Your Order</button>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    const sizeEl = document.getElementById('cake_size');
+    const displayTotal = document.getElementById('display-total');
+    const upgradeEl = document.getElementById('upgrade-cost');
+    const origPriceEl = document.getElementById('orig-price');
+    const offerPriceEl = document.getElementById('offer-price');
+    const hiddenInput = document.getElementById('final_amount');
+    const qrSection = document.getElementById('qr-section');
+    const qrImage = document.getElementById('qr-image');
+    const qrAmtDisplay = document.getElementById('qr-amt');
+    
+    const deliveryCharge = 20.00;
+
+    // Calculation Engine
+    sizeEl.addEventListener('change', function() {
+        const basePrice = parseFloat(this.dataset.base);
+        const offerPrice = parseFloat(this.dataset.offer);
+        const mult = parseFloat(this.options[this.selectedIndex].dataset.mult);
+        
+        const newOrig = (basePrice * mult).toFixed(2);
+        const newOffer = (offerPrice * mult).toFixed(2);
+        const upgrade = (newOffer - offerPrice).toFixed(2);
+        const finalTotal = (parseFloat(newOffer) + deliveryCharge).toFixed(2);
+
+        // Update UI Text
+        origPriceEl.innerText = `₹${newOrig}`;
+        offerPriceEl.innerText = `₹${newOffer}`;
+        upgradeEl.innerText = `₹${upgrade}`;
+        displayTotal.innerText = finalTotal;
+        qrAmtDisplay.innerText = finalTotal;
+        
+        // Update Forms
+        hiddenInput.value = finalTotal;
+        
+        // Update QR Code image for the specific amount
+        qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=rahul@upi&pn=SweetMart&am=${finalTotal}&cu=INR`;
+    });
+
+    // Payment Selection Logic
+    function selectPayment(el, method) {
+        document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        
+        // Radio Button Toggle
+        el.querySelector('input').checked = true;
+
+        if(method === 'upi') {
+            qrSection.classList.add('active');
+        } else {
+            qrSection.classList.remove('active');
+        }
+    }
+</script>
+
+</body>
+</html>

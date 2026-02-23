@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Cake | SweetMart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --choc-brown: #3D2B1F; --pink-accent: #FF85A2; --card-inner: #4A3728; }
+        body { background: var(--choc-brown); font-family: 'Quicksand', sans-serif; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .form-card { background: var(--card-inner); padding: 40px; border-radius: 40px; width: 100%; max-width: 400px; border: 1px solid rgba(255,255,255,0.05); }
+        h2 { font-family: 'Fredoka', sans-serif; color: var(--pink-accent); text-align: center; margin-bottom: 30px; }
+        label { display: block; margin-bottom: 8px; font-size: 0.8rem; opacity: 0.7; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 12px; border: none; background: rgba(0,0,0,0.2); color: white; box-sizing: border-box; font-family: 'Quicksand'; }
+        button { width: 100%; background: var(--pink-accent); color: white; padding: 15px; border-radius: 50px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        button:hover { transform: scale(1.02); }
+    </style>
+</head>
+<body>
+    <div class="form-card">
+        <h2>Add <span>New Cake</span></h2>
+        <form method="POST" enctype="multipart/form-data">
+            <label>Cake Name</label>
+            <input type="text" name="name" placeholder="Chocolate Truffle" required>
+            
+            <label>Price (₹)</label>
+            <input type="number" name="price" placeholder="599" required>
+
+            <label>Category</label>
+            <select name="category" required>
+                <option value="Chocolate">Chocolate</option>
+                <option value="Fruit">Fruit</option>
+                <option value="Eggless">Eggless</option>
+                <option value="Birthday">Birthday</option>
+            </select>
+            
+            <label>Select Cake Image</label>
+            <input type="file" name="cake_image" accept="image/*" required>
+            
+            <button type="submit">Upload & Save Cake</button>
+            <p style="text-align: center; margin-top: 15px;"><a href="/admin" style="color: white; opacity: 0.6; text-decoration: none;">Cancel</a></p>
+        </form>
+    </div>
+</body>
+</html>

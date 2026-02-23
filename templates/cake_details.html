@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ cake.name }} | Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --choc-brown: #2D1B0E; --pink-accent: #FF85A2; --cream-text: #FFFDF5; --card-inner: #3D2B1F; }
+        body { margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; background-color: var(--choc-brown); color: var(--cream-text); }
+        .container { display: flex; max-width: 1000px; margin: 80px auto; gap: 50px; padding: 20px; background: var(--card-inner); border-radius: 40px; border: 1px solid rgba(255,255,255,0.05); }
+        .image-side img { width: 450px; height: 450px; object-fit: cover; border-radius: 30px; }
+        .info-side { flex: 1; }
+        .category-tag { background: var(--pink-accent); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        h1 { font-family: 'Fredoka'; font-size: 2.5rem; margin: 15px 0; }
+        .description { opacity: 0.8; line-height: 1.6; margin-bottom: 25px; }
+        .price-display { font-size: 2rem; color: var(--pink-accent); font-weight: 700; margin-bottom: 20px; }
+        .selector-group { margin-bottom: 20px; }
+        select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px; border-radius: 10px; width: 100%; outline: none; }
+        .btn-buy { background: var(--pink-accent); color: white; border: none; padding: 15px 40px; border-radius: 25px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
+        .btn-buy:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,133,162,0.3); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-side">
+            <img src="{{ url_for('static', filename=cake.image_file) }}">
+        </div>
+        <div class="info-side">
+            <span class="category-tag">{{ cake.category }}</span>
+            <h1>{{ cake.name }}</h1>
+            <p class="description">{{ cake.description if cake.description else "Handcrafted with the finest ingredients, this boutique cake is a perfect blend of rich flavors and soft texture." }}</p>
+            
+            <div class="price-display">₹<span id="final-price">{{ cake.price }}</span></div>
+
+            <div class="selector-group">
+                <label>Select Weight:</label>
+                <select id="weight-select" onchange="updatePrice()">
+                    <option value="1" data-multiplier="1">500g (Standard)</option>
+                    <option value="2" data-multiplier="1.8">1kg</option>
+                    <option value="3" data-multiplier="3.5">2kg</option>
+                </select>
+            </div>
+
+            <button class="btn-buy" onclick="addToCart({{ cake.cake_id }})">Add to Collection</button>
+            <p style="margin-top:20px;"><a href="/" style="color:white; opacity:0.6;">← Back to Gallery</a></p>
+        </div>
+    </div>
+
+    <script>
+        const basePrice = {{ cake.price }};
+        function updatePrice() {
+            const select = document.getElementById('weight-select');
+            const multiplier = select.options[select.selectedIndex].getAttribute('data-multiplier');
+            const finalPrice = Math.round(basePrice * multiplier);
+            document.getElementById('final-price').innerText = finalPrice;
+        }
+
+        function addToCart(cid) { 
+            fetch(`/add_to_cart/${cid}`, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => { alert("Added to cart!"); }); 
+        }
+    </script>
+</body>
+</html>

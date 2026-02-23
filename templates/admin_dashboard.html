@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boutique OS | SweetMart Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --choc: #1a0f08; --pink: #ff85a2; --accent: #81c784; --danger: #ff4d4d;
+            --glass: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+
+        body { 
+            margin: 0; font-family: 'Quicksand', sans-serif; background: var(--choc); 
+            color: #fff; display: flex; min-height: 100vh; overflow-x: hidden;
+        }
+
+        .sidebar {
+            width: 280px; background: rgba(0,0,0,0.3); backdrop-filter: blur(20px);
+            position: fixed; height: 100vh; padding: 40px 20px; border-right: 1px solid var(--glass-border);
+            animation: slideIn 0.6s ease-out; z-index: 100;
+        }
+
+        .sidebar h1 { font-family: 'Fredoka'; color: var(--pink); font-size: 2rem; margin-bottom: 50px; }
+
+        .nav-link {
+            display: flex; align-items: center; gap: 15px; padding: 15px 20px;
+            color: rgba(255,255,255,0.6); text-decoration: none; border-radius: 18px;
+            margin-bottom: 10px; transition: var(--transition);
+        }
+
+        .nav-link:hover, .nav-link.active { background: var(--pink); color: white; transform: scale(1.05); }
+
+        .main-content { margin-left: 310px; padding: 40px; width: calc(100% - 310px); }
+
+        .analytics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 40px; }
+
+        .stat-card {
+            background: var(--glass); padding: 25px; border-radius: 25px;
+            border: 1px solid var(--glass-border); transition: var(--transition);
+            animation: fadeInUp 0.6s ease-out; text-align: center;
+        }
+
+        .stat-card:hover { transform: translateY(-10px); background: rgba(255,255,255,0.08); border-color: var(--pink); }
+        .stat-card h3 { font-size: 0.75rem; text-transform: uppercase; opacity: 0.5; margin: 0; letter-spacing: 1px; }
+        .stat-card p { font-family: 'Fredoka'; font-size: 2rem; margin: 10px 0 0; color: var(--pink); }
+
+        .glass-panel {
+            background: var(--glass); border-radius: 35px; padding: 35px;
+            border: 1px solid var(--glass-border); margin-bottom: 30px;
+            backdrop-filter: blur(10px); animation: fadeInUp 0.8s ease-out;
+        }
+
+        h2 { font-family: 'Fredoka'; color: var(--pink); font-size: 1.8rem; margin-bottom: 25px; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+        th { padding: 10px 15px; text-align: left; opacity: 0.4; font-size: 0.8rem; text-transform: uppercase; }
+        td { padding: 20px 15px; background: rgba(255,255,255,0.02); vertical-align: middle; }
+        td:first-child { border-radius: 15px 0 0 15px; }
+        td:last-child { border-radius: 0 15px 15px 0; }
+        
+        .address-box { font-size: 0.85rem; opacity: 0.8; line-height: 1.4; max-width: 250px; color: var(--accent); }
+        .cake-badge { background: var(--pink); color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: 700; margin-right: 5px; }
+
+        .inventory-item {
+            display: flex; flex-direction: column; gap: 10px; padding: 20px;
+            border-radius: 20px; background: rgba(255,255,255,0.02); margin-bottom: 15px;
+            transition: var(--transition); border: 1px solid var(--glass-border);
+        }
+
+        .btn-submit {
+            background: var(--pink); color: white; border: none; padding: 18px;
+            border-radius: 18px; font-weight: 700; cursor: pointer; transition: var(--transition);
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printSection, #printSection * { visibility: visible; }
+            #printSection { position: absolute; left: 0; top: 0; width: 100%; color: black !important; padding: 40px; display: block !important; }
+        }
+        #printSection { display: none; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <h1>SweetMart</h1>
+        <nav>
+            <a href="/admin/" class="nav-link active"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="#orders" class="nav-link"><i class="fas fa-truck-loading"></i> Shipping</a>
+            <a href="#inventory" class="nav-link"><i class="fas fa-cake"></i> Inventory</a>
+            <a href="/" class="nav-link"><i class="fas fa-external-link-alt"></i> Storefront</a>
+            <a href="/logout" class="nav-link" style="margin-top: 50px; color: var(--danger);"><i class="fas fa-power-off"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="analytics-grid">
+            <div class="stat-card"><h3>Revenue</h3><p>₹{{ stats.revenue }}</p></div>
+            <div class="stat-card"><h3>Orders</h3><p>{{ stats.orders }}</p></div>
+            <div class="stat-card"><h3>Live Cakes</h3><p style="color: var(--accent);">{{ stats.live_cakes }}</p></div>
+            <div class="stat-card"><h3>Customers</h3><p>{{ stats.customers }}</p></div>
+            <div class="stat-card"><h3>Pending</h3><p>{{ stats.pending }}</p></div>
+        </div>
+
+        <div class="glass-panel" id="orders">
+            <h2>Shipping <span>Control Hub</span></h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th>Specs</th>
+                        <th>Address</th>
+                        <th>Status Workflow</th>
+                        <th>Slip</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order, customer in orders %}
+                    <tr>
+                        <td><b>#{{ order.order_id }}</b></td>
+                        <td>
+                            <strong>{{ customer.name }}</strong><br>
+                            <a href="tel:{{ customer.phone }}" style="color: var(--pink); text-decoration: none; font-size: 0.85rem;"><i class="fas fa-phone"></i> {{ customer.phone }}</a>
+                        </td>
+                        <td>
+                            <span class="cake-badge">{{ order.cake_size }}</span>
+                            <span class="cake-badge" style="background:var(--accent)">{{ order.cake_shape }}</span><br>
+                            <small style="opacity: 0.7;">"{{ order.cake_message }}"</small>
+                        </td>
+                        <td>
+                            <div class="address-box">
+                                {% if '|' in order.status %}
+                                    {{ order.status.split('|')[1].replace('Address:', '').strip() }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('update_order', order_id=order.order_id) }}" method="POST" target="_blank">
+                                <select name="status" onchange="this.form.submit()" 
+                                    style="background:rgba(0,0,0,0.3); color: {% if 'Delivered' in order.status %}#81c784{% elif 'Baking' in order.status %}#ffb74d{% elif 'Out' in order.status %}#64b5f6{% else %}#ff85a2{% endif %}; border:1px solid currentColor; border-radius:10px; padding:6px; font-weight:700; cursor:pointer;">
+                                    <option value="Pending" {% if "Pending" in order.status %}selected{% endif %}>Pending</option>
+                                    <option value="Baking" {% if "Baking" in order.status %}selected{% endif %}>Baking</option>
+                                    <option value="Out for Delivery" {% if "Out" in order.status %}selected{% endif %}>Out for Delivery</option>
+                                    <option value="Delivered" {% if "Delivered" in order.status %}selected{% endif %}>Delivered</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            <button onclick="preparePrint('{{ order.order_id }}', '{{ customer.name }}', '{{ customer.phone }}', '{{ order.total_amount }}', '{{ order.cake_size }}', '{{ order.cake_shape }}', '{{ order.cake_message }}', '{{ order.status }}')" style="background:none; border:none; color:white; cursor:pointer;"><i class="fas fa-print"></i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px;">
+            <div class="glass-panel">
+                <h2>New <span>Boutique Item</span></h2>
+                <form action="{{ url_for('add_cake') }}" method="POST" enctype="multipart/form-data">
+                    <div style="margin-bottom:15px;"><label>Cake Name</label><br><input type="text" name="name" required style="width:100%; padding:10px; border-radius:10px; background:rgba(0,0,0,0.2); border:1px solid var(--glass-border); color:white;"></div>
+                    <div style="display: flex; gap: 10px; margin-bottom:15px;">
+                        <div style="flex:1;"><label>Price</label><br><input type="number" name="price" required style="width:100%; padding:10px; border-radius:10px; background:rgba(0,0,0,0.2); border:1px solid var(--glass-border); color:white;"></div>
+                        <div style="flex:1;"><label>Offer</label><br><input type="number" name="discount_price" value="0" style="width:100%; padding:10px; border-radius:10px; background:rgba(0,0,0,0.2); border:1px solid var(--glass-border); color:white;"></div>
+                    </div>
+                    <div style="margin-bottom:15px;"><label>Description</label><br><textarea name="description" rows="2" style="width:100%; padding:10px; border-radius:10px; background:rgba(0,0,0,0.2); border:1px solid var(--glass-border); color:white;"></textarea></div>
+                    <div style="margin-bottom:15px;"><input type="file" name="cake_image"></div>
+                    <button type="submit" class="btn-submit">Add to Boutique</button>
+                </form>
+            </div>
+
+            <div class="glass-panel" id="inventory">
+                <h2>Inventory <span>Manager</span></h2>
+                <div style="max-height: 480px; overflow-y: auto;">
+                    {% for cake in all_cakes %}
+                    <div class="inventory-item" style="opacity: {{ '1' if cake.is_active else '0.4' }};">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <img src="{{ url_for('static', filename=cake.image_file) }}" width="50" height="50" style="border-radius: 10px; object-fit: cover;">
+                            <div style="flex: 1;">
+                                <b>{{ cake.name }}</b><br>
+                                {% if cake.discount_price > 0 %}
+                                    <span style="color:var(--pink); font-weight:700;">₹{{ cake.discount_price }}</span> <span style="text-decoration:line-through; font-size:0.8rem; opacity:0.5;">₹{{ cake.price }}</span>
+                                {% else %}
+                                    <b>₹{{ cake.price }}</b>
+                                {% endif %}
+                            </div>
+                            <form action="{{ url_for('delete_cake', cake_id=cake.cake_id) }}" method="POST">
+                                <button type="submit" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </div>
+                        <p style="font-size: 0.8rem; opacity: 0.6; margin: 10px 0 0 65px; font-style: italic;">{{ cake.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="printSection">
+        <h1 style="text-align:center;">SWEETMART KITCHEN SLIP</h1>
+        <p><strong>Order ID:</strong> #<span id="pr-id"></span> | <strong>Contact:</strong> <span id="pr-phone"></span></p>
+        <p id="pr-address" style="background:#eee; padding:15px; font-size:1.2rem; border-radius:10px;"></p>
+        <p><strong>Specs:</strong> Weight: <span id="pr-size"></span> | Shape: <span id="pr-shape"></span></p>
+        <p><strong>Message:</strong> "<span id="pr-msg"></span>"</p>
+        <h2 style="text-align:right;">Collect: ₹<span id="pr-total"></span></h2>
+    </div>
+
+    <script>
+        function preparePrint(id, name, phone, total, size, shape, msg, fullStatus) {
+            document.getElementById('pr-id').innerText = id;
+            document.getElementById('pr-phone').innerText = phone;
+            document.getElementById('pr-total').innerText = total;
+            document.getElementById('pr-size').innerText = size;
+            document.getElementById('pr-shape').innerText = shape;
+            document.getElementById('pr-msg').innerText = msg;
+            document.getElementById('pr-address').innerText = fullStatus.includes('|') ? fullStatus.split('|')[1].replace('Address:', '').trim() : "Check Manual";
+            window.print();
+        }
+    </script>
+</body>
+</html>

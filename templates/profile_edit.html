@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Settings | SweetMart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --choc-brown: #3D2B1F; --pink-accent: #FF85A2; --card-inner: #4A3728; }
+        body { background: var(--choc-brown); color: white; font-family: 'Quicksand'; padding: 40px 5%; margin: 0; }
+        .edit-card { max-width: 500px; margin: 40px auto; background: var(--card-inner); padding: 40px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.05); }
+        h1 { font-family: 'Fredoka'; color: var(--pink-accent); text-align: center; }
+        label { display: block; margin-top: 20px; font-weight: bold; font-size: 0.85rem; opacity: 0.7; text-transform: uppercase; }
+        input, textarea { width: 100%; padding: 15px; margin-top: 8px; border-radius: 15px; border: none; background: rgba(0,0,0,0.3); color: white; box-sizing: border-box; font-family: 'Quicksand'; }
+        .locked-field { background: rgba(255,255,255,0.05); cursor: not-allowed; opacity: 0.5; color: #aaa; }
+        .btn-save { width: 100%; background: var(--pink-accent); color: white; padding: 15px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; margin-top: 30px; transition: 0.3s; }
+        .btn-save:hover { background: white; color: var(--pink-accent); }
+    </style>
+</head>
+<body>
+    <div class="edit-card">
+        <h1>Account <span>Settings</span></h1>
+        <form action="/profile/edit" method="POST">
+            <label>Full Name</label>
+            <input type="text" class="locked-field" value="{{ user.name }}" readonly>
+            
+            <label>Email Address</label>
+            <input type="email" class="locked-field" value="{{ user.email }}" readonly>
+            
+            <label>Update Shipping Address</label>
+            <textarea name="address" rows="4" required>{{ user.address if user.address }}</textarea>
+            
+            <button type="submit" class="btn-save">Update Address</button>
+        </form>
+        <a href="/" style="display:block; text-align:center; margin-top:20px; color:rgba(255,255,255,0.5); text-decoration:none;">Back to Shop</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join the Boutique | SweetMart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --choc: #2D1B0E; --pink: #FF85A2; --glass: rgba(255, 255, 255, 0.05); }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        body { 
+            margin: 0; font-family: 'Quicksand', sans-serif; background: var(--choc); 
+            color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+
+        .register-card {
+            background: var(--glass); backdrop-filter: blur(20px); padding: 40px;
+            border-radius: 40px; border: 1px solid rgba(255,255,255,0.1);
+            width: 100%; max-width: 400px; animation: slideUp 0.8s ease-out;
+        }
+
+        h1 { font-family: 'Fredoka'; color: var(--pink); text-align: center; margin-bottom: 30px; }
+
+        .input-group { margin-bottom: 20px; position: relative; }
+        
+        label { display: block; font-size: 0.8rem; margin-bottom: 8px; opacity: 0.7; font-weight: 700; }
+
+        input {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px; border-radius: 15px; color: white; outline: none; transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus { border-color: var(--pink); background: rgba(0,0,0,0.5); }
+        
+        /* Validation Styling */
+        input:invalid:not(:placeholder-shown) { border-color: #ff4d4d; }
+        input:valid:not(:placeholder-shown) { border-color: #81C784; }
+
+        .hint { font-size: 0.7rem; margin-top: 5px; opacity: 0.5; transition: 0.3s; }
+        .hint.error { color: #ff4d4d; opacity: 1; }
+
+        .btn-register {
+            width: 100%; background: var(--pink); color: white; border: none;
+            padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer;
+            font-size: 1rem; transition: 0.4s; margin-top: 10px;
+        }
+
+        .btn-register:hover { transform: scale(1.02); box-shadow: 0 10px 20px rgba(255,133,162,0.3); }
+        
+        .footer-link { text-align: center; margin-top: 20px; font-size: 0.9rem; opacity: 0.6; }
+        .footer-link a { color: var(--pink); text-decoration: none; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+    <div class="register-card">
+        <h1>Create <span>Account</span></h1>
+        
+        <form action="/register" method="POST" id="regForm">
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="Rahul Kamble" required>
+            </div>
+
+            <div class="input-group">
+                <label>Gmail Address</label>
+                <input type="email" name="email" id="email" 
+                       placeholder="example@gmail.com" 
+                       pattern="[a-z0-9._%+-]+@gmail\.com$" 
+                       required>
+                <div class="hint" id="emailHint">Must be a valid @gmail.com address</div>
+            </div>
+
+            <div class="input-group">
+                <label>Contact Number</label>
+                <input type="tel" name="phone" id="phone" 
+                       placeholder="9876543210" 
+                       pattern="[0-9]{10}" 
+                       maxlength="10" 
+                       required>
+                <div class="hint" id="phoneHint">Must be exactly 10 digits</div>
+            </div>
+
+            <div class="input-group">
+                <label>Security Password</label>
+                <input type="password" name="password" id="password" 
+                       placeholder="Min. 8 characters" 
+                       minlength="8" 
+                       required>
+                <div class="hint" id="passHint">Minimum 8 characters required</div>
+            </div>
+
+            <button type="submit" class="btn-register">Sign Up</button>
+        </form>
+
+        <div class="footer-link">
+            Already a member? <a href="/login">Login here</a>
+        </div>
+    </div>
+
+    <script>
+        // Custom Real-time Feedback
+        const fields = [
+            { id: 'email', hint: 'emailHint', msg: 'Please use a Gmail account' },
+            { id: 'phone', hint: 'phoneHint', msg: 'Enter 10-digit mobile number' },
+            { id: 'password', hint: 'passHint', msg: 'Password too short (min 8)' }
+        ];
+
+        fields.forEach(field => {
+            const input = document.getElementById(field.id);
+            const hint = document.getElementById(field.hint);
+
+            input.addEventListener('input', () => {
+                if (!input.checkValidity()) {
+                    hint.classList.add('error');
+                    hint.innerText = field.msg;
+                } else {
+                    hint.classList.remove('error');
+                    hint.innerText = "Looks good!";
+                    hint.style.color = "#81C784";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
